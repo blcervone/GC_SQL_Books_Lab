@@ -1,0 +1,100 @@
+--Create both tables.
+
+CREATE TABLE book(
+	id SERIAL PRIMARY KEY,
+	title VARCHAR(60),
+	author VARCHAR(60),
+	checked_out_by_id INT,
+	 FOREIGN KEY (checked_out_by_id) REFERENCES member(id)
+);
+
+CREATE TABLE member(
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(40),
+	card_number CHAR(10) 
+);
+
+--Add the following rows to the member table.
+--Name: “Annabelle Aster”, Card Number: “772-93-110”
+--Name: “Boris Berceli”, Card Number: “000-00-000”
+--Name: “Carter Corbin”, Card Number: “282-09-382”
+
+INSERT into member(id, name, card_number)
+values(1, 'Annabelle Aster', '772-93-110');
+
+INSERT into member(id, name, card_number)
+values(2, 'Boris Berceli', '000-00-000');
+
+INSERT into member(id, name, card_number)
+values(3, 'Carter Corbin', '282-09-382');
+
+select * from member;
+
+--Add the following rows to the book table.
+--Title: “In Search of Lost Time”, Author: “Marcel Proust”, Checked out by: Annabelle.
+--Title: “Ulysses”, Author: “James Joyce”, Checked out by: Annabelle.
+--Title: “Don Quixote”, Author: “Miguel de Cervantes”, Checked out by: Carter.
+--Title: “Moby Dick”, Author: “Herman Melville”, Not checked out (null).
+
+INSERT into book(title, author, checked_out_by_id)
+values ('In Search of Lost Time', 'Marcel Proust', 1);
+
+INSERT into book(title, author, checked_out_by_id)
+values ('Ulysses', 'James Joyce', 1);
+
+INSERT into book(title, author, checked_out_by_id)
+values ('Don Quixote', 'Miguel de Cervantes', 3);
+
+INSERT into book(title, author, checked_out_by_id)
+values ('Moby Dick', 'Herman Melville', NULL);
+
+select * from book;
+
+--Update the member with the id of 2 to have a card number of “357-15-964”.
+
+update member
+set card_number = '357-15-964'
+where id = 2;
+
+--Remove the member with the id of 2.
+
+delete from member where id = 2;
+
+--Select all members that have the card number 772-93-110.
+
+select * from member where card_number ='772-93-110';
+
+--Select all books sorted by title
+
+select * from book order by title;
+
+--Annabelle checked out another book… Update Moby Dick to be checked out by Annabelle.
+
+update book
+set checked_out_by_id = 1
+where title = 'Moby Dick';
+
+--Annabelle turned in a book… Update Ulysses to be checked out by no one (null).
+
+update book
+set checked_out_by_id = NULL
+where title = 'Ulysses';
+
+--Write a JOIN that lists all the books and who they’re checked out to. Include the books that are not checked out.
+
+select title, name from book
+left join member on book.checked_out_by_id = member.id;
+
+--Write a JOIN that lists the titles of all the books that are checked out to someone named Annabelle Aster (don't just use the ID)
+
+select title, name from book
+join member on book.checked_out_by_id = member.id
+where name = 'Annabelle Aster';
+
+--Write a JOIN that lists the name and card number of all members who have checked out books by the author Herman Melville.
+
+select * from book;
+
+select name, card_number from member
+join book on member.id = book.checked_out_by_id
+where author = 'Herman Melville';
